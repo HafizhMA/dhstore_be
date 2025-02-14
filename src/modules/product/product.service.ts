@@ -14,14 +14,17 @@ export class ProductService {
   ){}
   async create(payload: CreateProductDto) {
     const data = await this.productModel.create({
-
       id: uuidv4(),
       name: payload.name,
       price: payload.price,
       qty: payload.qty,
+      categoryId: payload.categoryId,
       active: payload.active,
-      isAdditional: payload.isAdditional
+      isAdditional: payload.isAdditional,
     })
+
+    console.log('data:', data);
+    
 
     let additionals: any = [];
     if (payload.variants !== undefined) {
@@ -30,12 +33,15 @@ export class ProductService {
           id: uuidv4(),
           name: variant.name,
           qty: variant.qty,
+          productId: data.id,
         })
+        console.log('additional:', additional);
+        
         additionals.push(additional)
       }
     }
 
-    return {...data.toJSON, additionals};
+    return {...data.toJSON(), additionals};
   }
 
   findAll() {

@@ -31,6 +31,12 @@ export class CreateProductDto {
     @IsOptional()
     active: boolean;
 
+    @ApiProperty({example: 'b0da25af-4cd8-4726-ba8d-748d27050eee'})
+    @IsString()
+    @IsDefined()
+    @IsNotEmpty()
+    categoryId: string;
+
     @IsArray()
     @IsOptional()
     @ValidateNested({each: true})

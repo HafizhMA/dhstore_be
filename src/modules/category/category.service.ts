@@ -1,15 +1,26 @@
 import { Injectable } from '@nestjs/common';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
+import { InjectModel } from '@nestjs/sequelize';
+import { Category } from 'src/database/models/categories.model';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class CategoryService {
-  create(createCategoryDto: CreateCategoryDto) {
-    return 'This action adds a new category';
+  constructor(
+    @InjectModel(Category) private readonly categoryModel: typeof Category
+  ){}
+  async create(payload: CreateCategoryDto) {
+    const data = await this.categoryModel.create({
+      id: uuidv4(),
+      name: payload.name,
+    })
+
+    return data;
   }
 
-  findAll() {
-    return `This action returns all category`;
+  async findAll() {
+    return await this.categoryModel.findAll();
   }
 
   findOne(id: number) {
