@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { ProductModule } from './modules/product/product.module';
+import { CategoryModule } from './modules/category/category.module';
 
 @Module({
   imports: [ConfigModule.forRoot({
@@ -23,7 +24,8 @@ import { ProductModule } from './modules/product/product.module';
     }),
     inject: [ConfigService]
   }),
-  ProductModule
+  ProductModule,
+  CategoryModule
 
 ],
   // controllers: [AppController],
