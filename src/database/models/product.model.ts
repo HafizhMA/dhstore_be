@@ -2,7 +2,7 @@ import { Table, Column, AllowNull, HasMany, DefaultScope, DeletedAt, ForeignKey,
 import { TimeStamps } from "./base.model";
 import { ProductAdditional } from "./product_additional.model";
 import { ProductReview } from "./product_reviews.model";
-// import { Category } from "./categories.model";
+import { Category } from "./categories.model";
 
 @DefaultScope(() => ({
     attributes: { exclude: ['deletedAt'] },
@@ -10,10 +10,10 @@ import { ProductReview } from "./product_reviews.model";
 }))
 @Table({ timestamps: true, tableName: 'products' })
 export class Product extends TimeStamps {
-    // @AllowNull(false)
-    // @ForeignKey(() => Category)
-    // @Column({ field: 'category_id'})
-    // categoryId: string;
+    @AllowNull(false)
+    @ForeignKey(() => Category)
+    @Column({ field: 'category_id'})
+    categoryId: string;
 
     @AllowNull(true)
     @Column
@@ -41,6 +41,6 @@ export class Product extends TimeStamps {
     @HasMany(() => ProductReview)
     reviews: ProductReview[];
 
-    // @BelongsTo(() => Category)
-    // category: Category;
+    @BelongsTo(() => Category)
+    category: Category;
 }

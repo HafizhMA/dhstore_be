@@ -1,4 +1,4 @@
-import { Model, Column, CreatedAt } from "sequelize-typescript";
+import { Model, Column, CreatedAt, UpdatedAt } from "sequelize-typescript";
 
 export class TimeStamps extends Model {
     @CreatedAt
@@ -7,7 +7,7 @@ export class TimeStamps extends Model {
     })
     createdAt: Date;
 
-    @CreatedAt
+    @UpdatedAt
     @Column({
         field: 'updated_at'
     })
