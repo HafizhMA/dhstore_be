@@ -3,19 +3,28 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up (queryInterface, Sequelize) {
-    await queryInterface.createTable('products', {
+    await queryInterface.createTable('product_additionals', {
       id: {
         type: Sequelize.UUID,
         primaryKey: true,
         allowNull: false,
         default: Sequelize.fn('uuid_generate_v4'),
       },
+      productId:{
+        type: Sequelize.UUID,
+        field: 'product_id',
+        allowNull:false,
+        references:{
+          model: 'products',
+          key: 'id',
+        },
+      },
       name: {
         type: Sequelize.STRING,
         allowNull: true,
       },
-      price: {
-        type: Sequelize.BIGINT,
+      description: {
+        type: Sequelize.TEXT,
         allowNull: true,
       },
       qty: {
@@ -37,13 +46,13 @@ module.exports = {
       deletedAt: {
         type: Sequelize.DATE,
         field: 'deleted_at',
-        allowNull: true,
+        allowNull: false,
         defaultValue: null,
-      }
+      },
     })
   },
 
   async down (queryInterface, Sequelize) {
-    await queryInterface.dropTable('products')
+    await queryInterface.dropTable('product_additionals')
   }
 };
