@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { InjectModel } from '@nestjs/sequelize';
@@ -44,19 +44,84 @@ export class ProductService {
     return {...data.toJSON(), additionals};
   }
 
-  findAll() {
-    return `This action returns all product`;
+  async findAll() {
+    const data = await this.productModel.findAll({
+      include: [{
+        model: ProductAdditional
+      }]
+    })
+
+    return data;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} product`;
+  async findOne(id: string) {
+    const data = await this.productModel.findOne({
+      where: {id},
+      include: [{
+        model: ProductAdditional,
+      }]
+    })
+
+    if(!data) {
+      throw new NotFoundException('not found product')
+    }
+
+    return data;
   }
 
-  update(id: number, updateProductDto: UpdateProductDto) {
+  async update(id: string, payload: UpdateProductDto) {
+    const previousData = await this.findOne(id);
+
+    let newData: any = {}
+
+    if(payload.name !== undefined) {
+      newData.name = payload.name
+    }
+
+    if(payload.price !== undefined) {
+      newData.price = payload.price
+    }
+
+    if(payload.qty !== undefined) {
+      newData.qty = payload.qty
+    }
+
+    if(payload.active !== undefined) {
+      newData.active = payload.active
+    }
+
+    if(payload.isAdditional !== undefined) {
+      newData.isAdditional = payload.isAdditional
+    }
+
+    if(payload.variants !== undefined) {
+      const variants = payload.variants.map(v => {
+        return {
+          id: v.id,
+          productId: previousData.id,
+          name: v.name,
+          price: v.price,
+          qty: v.qty,
+        }
+      })
+
+      const variantsIds = []
+
+      for (const variant of variants) {
+        if (variant.id) {
+
+        }
+      }
+    }
+
     return `This action updates a #${id} product`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} product`;
+  async remove(id: string) {
+    await this.productModel.destroy({
+      where: {id}
+    })
+
+    return `data has been deleted`;
   }
 }
