@@ -1,3 +1,7 @@
+<div>
+<h1>Api documentation link <a href="http://localhost:3050/api-docs">http://localhost:3050/api-docs</a></h1>
+</div>
+
 <p align="center">
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
 </p>
