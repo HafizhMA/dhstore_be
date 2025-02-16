@@ -23,9 +23,6 @@ export class ProductService {
       isAdditional: payload.isAdditional,
     })
 
-    console.log('data:', data);
-    
-
     let additionals: any = [];
     if (payload.variants !== undefined) {
       for (const variant of payload.variants) {
@@ -35,7 +32,6 @@ export class ProductService {
           qty: variant.qty,
           productId: data.id,
         })
-        console.log('additional:', additional);
         
         additionals.push(additional)
       }
