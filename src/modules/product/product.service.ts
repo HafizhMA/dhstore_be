@@ -1,10 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { InjectModel } from '@nestjs/sequelize';
 import { Product } from 'src/database/models/product.model';
 import { v4 as uuidv4 } from 'uuid';
 import { ProductAdditional } from 'src/database/models/product_additional.model';
+import { Op } from 'sequelize';
 
 @Injectable()
 export class ProductService {
@@ -31,6 +32,7 @@ export class ProductService {
           name: variant.name,
           qty: variant.qty,
           productId: data.id,
+          price: variant.price
         })
         
         additionals.push(additional)
@@ -69,7 +71,7 @@ export class ProductService {
     const previousData = await this.findOne(id);
 
     let newData: any = {}
-
+ 
     if(payload.name !== undefined) {
       newData.name = payload.name
     }
@@ -96,21 +98,76 @@ export class ProductService {
           id: v.id,
           productId: previousData.id,
           name: v.name,
-          price: v.price,
           qty: v.qty,
+          price: v.price,
         }
       })
 
-      const variantsIds = []
+      const variantIds: string[] = []
 
       for (const variant of variants) {
         if (variant.id) {
+          const findVariant = await this.productAdditionalModel.findOne({
+            where: {
+              id: variant.id,
+              productId: previousData.id
+            }
+          })
 
-        }
+          const findExactVariant = await this.productAdditionalModel.findOne({
+            where: {
+              name: variant.name,
+              id: { [Op.ne]: variantIds }
+            }
+          })
+
+          if ( findExactVariant) {
+            throw new BadRequestException('there is same name variant')
+          }
+
+          const exactNameVariant = await this.productAdditionalModel.findOne({
+            where: {
+              name: { [Op.like]: `%${variant.name}%`},
+              id: { [Op.ne]: variantIds}
+            }
+          })
+
+          if(exactNameVariant) {
+            const destroyVariantExactName = await exactNameVariant.destroy()
+          }
+
+          const updateVariant = await this.productAdditionalModel.update({
+            name: variant.name,
+            qty: variant.qty,
+            price: variant.price
+          }, {
+            where: {
+              id: variant.id
+            }
+          })
+
+          variantIds.push(variant.id)
+      } else {
+        const createVariant = await this.productAdditionalModel.create({
+          id: uuidv4(),
+          productId: variant.productId,
+          name: variant.id,
+          qty: variant.qty
+        })
+        variantIds.push(variant.id)
       }
-    }
 
-    return `This action updates a #${id} product`;
+      const destroyVariant = await this.productAdditionalModel.destroy({
+        where: {
+          id: { [Op.notIn]: variantIds }
+        }
+      })
+    }
+  }
+
+    await previousData.update(newData)
+    const updatedProduct = await this.findOne(id)
+    return updatedProduct;
   }
 
   async remove(id: string) {

@@ -17,6 +17,14 @@ export class ProductAdditional extends TimeStamps {
     @Column
     name: string;
 
+    @AllowNull(true)
+    @Column
+    qty: number;
+
+    @AllowNull(true)
+    @Column
+    price: number;
+
     @DeletedAt
     @Column({ field: 'deleted_at' })
     deletedAt?: Date;

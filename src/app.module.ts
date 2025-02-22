@@ -5,6 +5,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { ProductModule } from './modules/product/product.module';
 import { CategoryModule } from './modules/category/category.module';
+import { RoleModule } from './modules/role/role.module';
+import { UserModule } from './modules/user/user.module';
 
 @Module({
   imports: [ConfigModule.forRoot({
@@ -25,7 +27,9 @@ import { CategoryModule } from './modules/category/category.module';
     inject: [ConfigService]
   }),
   ProductModule,
-  CategoryModule
+  CategoryModule,
+  RoleModule,
+  UserModule
 
 ],
   // controllers: [AppController],

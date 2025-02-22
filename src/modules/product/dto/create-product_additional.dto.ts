@@ -11,4 +11,9 @@ export class CreateProductAdditionalDto {
     @IsNumber()
     @IsOptional()
     qty: string;
+
+    @ApiProperty({ example: 1 })
+    @IsNumber()
+    @IsOptional()
+    price: number
 }
